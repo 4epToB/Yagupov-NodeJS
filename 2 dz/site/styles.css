@@ -1,0 +1,10 @@
+.main_menu{
+    display: flex;
+    margin: 20px;
+    background-color: rgb(62, 66, 65);
+}
+.main_menu p{
+    margin: 20px;
+    background-color: aquamarine;
+    
+}
