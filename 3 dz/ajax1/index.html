@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Задача номер 1</h2>
+    <div id="container"></div><br>
+    <button id="btn">Показать ajax.html</button>
+    <button id="btn2">Показать users.json</button>
+    <button id="btn3">Показать products.json</button>
+</body>
+</html>
+<script>
+    btn.addEventListener('click',()=>{
+        var xhr= new XMLHttpRequest();
+        xhr.open('GET','ajax',false);
+        xhr.send();
+        if(xhr.status!=200) {
+            alert(xhr.status+': '+xhr.statusText); 
+        }else{
+            document.getElementById('container').innerHTML =xhr.responseText
+        }
+    })
+    btn2.addEventListener('click',()=>{
+        var xhr= new XMLHttpRequest();
+        xhr.open('GET','users',false);
+        xhr.send();
+        if(xhr.status!=200) {
+            alert(xhr.status+': '+xhr.statusText); 
+        }else{
+            let AllUserJson=JSON.parse(xhr.response)
+            let list = document.createElement('ul')
+            document.getElementById('container').append(list)
+            for (let i=0;i<AllUserJson.length;i++){
+                let listitem=document.createElement('li')
+                list.append(listitem)
+                listitem.innerHTML=AllUserJson[i].name
+                
+            }
+
+        }
+    })
+    btn3.addEventListener('click',()=>{
+        var xhr= new XMLHttpRequest();
+        xhr.open('GET','products',false);
+        xhr.send();
+        if(xhr.status!=200) {
+            console.log(xhr.statusText)
+        }else{
+            let products=JSON.parse(xhr.response)
+            let div = document.createElement('div')
+            document.getElementById('container').append(div)
+            for (let i=0;i<products.length;i++){
+                let productName=document.createElement('h2')
+                div.append(productName)
+                productName.innerHTML=products[i].name
+            }
+            console.log(xhr.response)
+            console.log(products)
+
+        }
+    })
+</script>

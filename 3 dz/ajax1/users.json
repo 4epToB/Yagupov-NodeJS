@@ -1,0 +1,14 @@
+[
+    {
+        "name":"John",
+        "pass":"123"
+    },
+    {
+        "name":"Petr",
+        "pass":"333"
+    },
+    {
+        "name":"Ivan",
+        "pass":"132"
+    }
+]

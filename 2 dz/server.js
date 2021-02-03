@@ -25,7 +25,7 @@ http.createServer((request,response)=>{
                 response.writeHead(200, {'Content-Type': mimeType});
                 response.end(img);
             } catch (e) {
-                console.log('Could not find or open file for reading\n');
+                console.log('C              ould not find or open file for reading\n');
                 response.statusCode = 404;
                 response.end();
             }
