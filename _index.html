@@ -1,0 +1,35 @@
+<script>
+    function authenticate_user(username,password, callback){
+        let xhr=new XMLHttpRequest();
+        xhr.open('POST','https://....'+username+'&password='+password,false);
+        xhr.responseType='json'
+        xhr.send();
+
+        const result = false;
+
+        xhr.onload=function(){
+            if(xhr.status!==200) {
+                result=xhr.response
+            }else{
+                result=true
+            }
+			callback(result);
+        };
+    }
+    $('form #login').click(function(){
+        var username = $('#username').val();
+        var password = $('#password').val();
+
+        authenticate_user(username,password, function(res){
+			if(res===true){
+				document.location.href='/home'
+			}else{
+				alert(res.error)
+			}		
+		});
+    })
+</script>
+dfkblfwb
+валидация
+трим
+название

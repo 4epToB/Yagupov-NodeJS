@@ -1,0 +1,79 @@
+*{
+    box-sizing: border-box;
+}
+
+ul{
+    display: flex;
+    justify-content:space-around;
+    list-style-type: none;
+    padding: 0;
+    background-color: yellowgreen;
+}
+li{
+    width: 16.6%;
+    text-align: center;
+    height: 2em;
+    line-height: 2em;
+}
+li:hover{
+    background-color: rgb(237, 248, 214);
+    border: 1px solid grey;
+}
+.div {
+    border: 3px aqua solid;
+    margin: 10px;
+    width: 100%;
+}
+.plitka{
+    width: 30%;
+}
+figure {
+    width: 33%;
+    margin: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+figure img {
+    width: 100px;
+    height: 100px;
+    margin-left: auto;
+}
+figure p {
+    position: relative;
+    height: 100px;
+    margin: 0px;
+    
+}
+figcaption {
+    line-height: 20px;
+    padding-top: 5px;
+}
+.gallery{
+    display: flex;
+    width: 100vw;
+    flex-wrap: wrap;
+}
+#deleteicon{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 25px;
+    height: 25px;
+}
+.add{
+    width: 33%;
+    margin: 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: lightgrey;
+    border: 2px solid darkgray;
+    border-radius: 5 px;
+}
+.add input, .add button{
+    width: 65%;
+}
