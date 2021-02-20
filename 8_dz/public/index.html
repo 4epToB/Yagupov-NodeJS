@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/socket.io/socket.io.js"></script>
+    
+    <title>Document</title>
+    <style>
+        *{
+            box-sizing: border-box;
+        }
+        .board{
+            width: 333px;
+            height: 333px;
+            box-sizing: content-box;
+            background-color:whitesmoke;
+            border: 1px solid gray;
+        }
+        .tr{
+            display: flex;
+        }
+        .td, .td_taken_1, .td_taken_2{
+            background-color:whitesmoke; 
+            width: 111px;
+            height: 111px;
+            border: 1px solid gray;
+        }
+    </style>
+</head>
+<body>
+    <div class='board'>
+        <div class="tr">
+            <div class="td"></div>
+            <div class="td"></div>
+            <div class="td"></div>
+        </div>
+        <div class="tr">
+            <div class="td"></div>
+            <div class="td"></div>
+            <div class="td"></div>
+        </div>
+        <div class="tr">
+            <div class="td"></div>
+            <div class="td"></div>
+            <div class="td"></div>
+        </div>
+    </div>
+    <script>
+        var socket = io.connect('http://localhost:8080');
+        let myUnit
+        let myClass
+        let freeBtn=document.querySelectorAll(".td")
+        let turnsMas=[]
+        for(let i=0;i<document.querySelectorAll(".td").length;i++){
+            freeBtn[i].setAttribute('id',i)
+        }
+
+
+        socket.on('setNewPlayer', function (data) {
+            data.unit?myUnit="url(zero.png)":myUnit="url(krest.png)"
+            data.unitClass?myClass="td_taken_1":myClass="td_taken_2"
+			console.log(myUnit,myClass,data.turn);  
+
+            for(let i=0;i<document.querySelectorAll(".td").length;i++){
+                document.querySelectorAll(".td")[i].style.background="none"
+                if(data.turn){document.querySelectorAll(".td")[i].addEventListener('click', action)}
+            }
+		});      
+        
+        function action(e){
+            for(let i=0;i<document.querySelectorAll(".td").length;i++){
+                document.querySelectorAll(".td")[i].removeEventListener('click', action);
+            }
+            document.getElementById(e.target.id).className=myClass
+            getWinner(myClass)
+            this.style.background=myUnit
+            socket.emit('PlayerTurn',{path:e.target.id,unit:myUnit,myClass:myClass})
+        }
+
+        socket.on('PlayerTurn',(data)=>{
+            for(let i=0;i<document.querySelectorAll(".td").length;i++){
+                document.querySelectorAll(".td")[i].addEventListener('click', action)
+            }
+            document.getElementById(data.path).removeEventListener('click', action)
+            document.getElementById(data.path).className=data.myClass
+            console.log(data)
+            document.getElementById(data.path).style.background=data.unit
+
+        })
+        function getWinner(clasvalue){
+            allTurns= document.querySelectorAll("[class="+clasvalue+"]")
+            turnsMas=[]
+            for(i=0;i<allTurns.length;i++){
+                turnsMas.push(allTurns[i].id)
+            }
+
+            if (turnsMas.includes("0") && turnsMas.includes("1") && turnsMas.includes("2")) console.log('победа') 
+            if (turnsMas.includes("3") && turnsMas.includes("4") && turnsMas.includes("5")) console.log('победа')
+            if (turnsMas.includes("6") && turnsMas.includes("7") && turnsMas.includes("8")) console.log('победа')
+            if (turnsMas.includes("0") && turnsMas.includes("3") && turnsMas.includes("6")) console.log('победа')
+            if (turnsMas.includes("1") && turnsMas.includes("4") && turnsMas.includes("7")) console.log('победа')
+            if (turnsMas.includes("2") && turnsMas.includes("5") && turnsMas.includes("8")) console.log('победа')
+            if (turnsMas.includes("0") && turnsMas.includes("4") && turnsMas.includes("8")) console.log('победа')
+            if (turnsMas.includes("2") && turnsMas.includes("4") && turnsMas.includes("6")) console.log('победа')
+        }
+        
+    </script>
+</body>
+</html>
