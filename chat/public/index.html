@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <div id="main">
+      <div id="mainwrapper" v-if="visible">
+        <label for="userNameInput">Имя пользователя</label>
+        <input type="text" v-model="userName" /><br />
+        <label for="roomNameInput">Создать комнату</label>
+        <input type="text" v-model="roomName" />
+        <button @click="createRoom">Создать комнату</button><br />
+        <select id="roomsList" v-model="roomList">
+          <option v-for="room in rooms">{{room}}</option>
+        </select>
+
+        <button id="connect" @click="joinRoom">коннект</button>
+      </div>
+
+      <div id="chatwrapper" v-show="!visible">
+        <div id="chat">
+          <div v-for="msg in message">{{msg}}</div>
+        </div>
+        <label
+          >Введите сообщение<input
+            type="text"
+            id="chatmessage"
+            v-model="msgInput"
+        /></label>
+
+        <button @click="sendMessage">отправить</button>
+        <button @click="visible=!visible">выйти</button>
+      </div>
+    </div>
+
+    <script>
+      var socket = io();
+      let app = Vue.createApp({
+        data: function () {
+          return {
+            visible: true,
+            rooms: [],
+            message: [],
+            userName: "",
+            roomName: "",
+            msgInput: "",
+            roomList: "",
+          };
+        },
+        methods: {
+          createRoom: function () {
+            socket.emit("newChat", [this.userName, this.roomName]);
+            this.visible = false;
+          },
+          sendMessage: function () {
+            socket.emit("message", [this.roomName, this.msgInput]);
+          },
+          joinRoom: function () {
+            this.roomName = this.roomList;
+            socket.emit("joinChat", [this.roomList, this.userName]);
+            this.visible = false;
+          },
+        },
+        mounted() {
+          socket.on("emitmessage", (obj) => {
+            console.log(obj);
+            this.message = obj;
+          });
+          socket.on("newRoom", (name) => {
+            this.rooms.push(name);
+          });
+        },
+        created() {
+          socket.emit("getRooms");
+          socket.on("emitRooms", (obj) => {
+            this.rooms = obj;
+            console.log(obj);            
+          });
+        },
+      });
+
+      let main = app.mount("#main");
+    </script>
+  </body>
+</html>

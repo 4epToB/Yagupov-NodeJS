@@ -1,0 +1,19 @@
+{
+  "name": "tictac_sockets",
+  "version": "1.0.0",
+  "description": "Simple sockets game",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "game",
+    "websockets"
+  ],
+  "author": "kurikania",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^3.1.1"
+  }
+}
