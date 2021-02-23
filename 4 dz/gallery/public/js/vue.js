@@ -28,7 +28,7 @@ let app=Vue.createApp({
         url(link){
             if (link.includes("https://")){
                 return link
-            }else return "../img/"+link
+            }else return "./img/"+link
         },
         deleteicon(event){
                 console.log(event.path[2])
@@ -49,7 +49,7 @@ let app=Vue.createApp({
             <figure v-for="(img,index) in images">
                 <p>
                     <img v-bind:src=url(img.url) alt=img.descr>
-                    <img id="deleteicon" src="../img/delete.png" @click="images.splice(index, 1)">
+                    <img id="deleteicon" src="./img/delete.png" @click="images.splice(index, 1)">
                 </p>
                 <figcaption>{{img.descr}}</figcaption>
             </figure>
