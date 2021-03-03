@@ -2,18 +2,7 @@
 let app=Vue.createApp({
     data(){
         return {
-            images:[
-                {"descr": "Gorillaz",
-                "url": "1.jpg",},
-                {"descr": "Eminem",
-                "url": "2.jpg",},
-                {"descr": "ACDC",
-                "url": "3.jpg",},
-                {"descr": "Beatles",
-                "url": "4.jpg",},
-                {"descr": "Крип-а-Крип",
-                "url": "5.jpg",},
-              ],
+            images:[],
               newImgUrl:"",
               newImgDescr:"",
               newimgobj:{},
@@ -25,26 +14,11 @@ let app=Vue.createApp({
     watch:{
     },
     methods:{
-        url(link){
-            if (link.includes("https://")){
-                return link
-            }else return "./img/"+link
-        },
-        deleteicon(event){
-                console.log(event.path[2])
-                console.log(event) 
-        },
-        addImg(){
-            this.newimgobj={
-                "descr": this.newImgDescr,
-                "url": this.newImgUrl,
-            }
-            this.images[this.images.length]=this.newimgobj
-    },
+
     },
     template:`
         <h2>Галерея</h2>
-
+        <div id="container"></div> 
         <div class="gallery">
             <figure v-for="(img,index) in images">
                 <p>
@@ -54,13 +28,34 @@ let app=Vue.createApp({
                 <figcaption>{{img.descr}}</figcaption>
             </figure>
             <div class="add">
-                <label>Введите url:</label>
-                <input placeholder=" 2.jpg или https://..." type="text" v-model="newImgUrl">
-                <label>Введите описание:</label>
-                <input type="text" v-model="newImgDescr">
-                <button @click="addImg">Добавить картинку</button>
+                <form name="upload" action="/" method="post" enctype="multipart/form-data">
+                    <label>Добавить файл
+                        <input name="name" type="text">
+                        <input name="descr" type="text">
+                        <input name="img" type="file">
+                    </label>
+                    <button id="btn">Добавить картинку</button>
+                </form>
             </div>
         </div>
     `
 })
 let card=app.mount("#main")
+
+
+
+
+btn.addEventListener('click',()=>{
+    let formData = new FormData(document.forms.upload)
+    var xhr= new XMLHttpRequest();
+    xhr.open('post','/',true);
+    xhr.send(formData);
+    xhr.onreadystatechange=function() {//(0 → 1 → 2 → 3 → … → 3 → 4)
+        if(xhr.readyState!=4)return;
+        if(xhr.status!=200) {
+            alert(xhr.status+': '+xhr.statusText);// обработать ошибку
+        }else {
+            console.log("asd"+xhr.responseText); // вывести результат
+        }
+    }
+})
