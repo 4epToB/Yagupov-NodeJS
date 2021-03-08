@@ -10,7 +10,7 @@ let clientRooms = {};
 io.on("connection", (client) => {
   console.log("a user connected");
 
-  client.on("newChat", function handleNewChat(obj) {
+  client.on("newChat", function(obj) {
     clientRooms[obj[1]] = {};
     clientRooms[obj[1]].messages = [];
     clientRooms[obj[1]].users = [{id: client.id, username: obj[0], roomname: obj[1]}];
