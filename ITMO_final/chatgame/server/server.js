@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const server = require('http').Server(app);
 const cors = require('cors');
+var moment = require('moment');
+moment.locale('ru');  
 
 const corsOptions = {
   credentials: true
@@ -20,9 +22,10 @@ const io = require('socket.io')(server,{
 server.listen(3000, function () {
     console.log('Server started!');
 });
+
 let users=[]
 let lobbies=[]
-let m=(username,text,id)=>({username, text, id})
+let m=(username,text)=>({username, text, time:moment().format('LT')})
 io.on('connection', function (socket) {
     socket.on("login",(username,cb)=>{
         if(!username){
@@ -46,6 +49,14 @@ io.on('connection', function (socket) {
 
     })
     socket.on("sendMessage",(message)=>{
+        if(message.textMessage.match(/^\//)){
+            let lobbyToSend = lobbies.find(lobby => lobby.hasOwnProperty(socket.id))
+            if(lobbyToSend){
+                let regMessage=message.textMessage.substring(1)
+                io.to(lobbyToSend.lobbyName).emit('newMessage',m(message.username,regMessage))
+            }
+            return
+        }
         io.to("mainroom").emit('newMessage',m(message.username,message.textMessage))
     })
     
@@ -95,15 +106,17 @@ io.on('connection', function (socket) {
 
     socket.on('PlayerTurn',function(data){
         let lobby = lobbies.find(lobby => lobby.lobbyName === data.lobbyName)
-        console.log('Список лобби:',lobbies)
-        console.log("data:",data)
-        console.log("lobby:",lobby)
         lobby[socket.id].push(data.path)
+        
         if(getWinner(lobby[socket.id])){
-            let index=lobbies.findIndex(lobby=>lobby.username==data.lobbyName)
+            console.log('Список лобби до:',lobbies)
+            console.log('имя лобби:',data.lobbyName)
+            let index=lobbies.findIndex(lobby=>lobby.lobbyName==data.lobbyName)
+            console.log('index:',index)
             lobbies.splice(index,1) 
+            console.log('Список лобби после:',lobbies)
             io.to("mainroom").emit('getLobbies',lobbies)
-            io.to(data.lobbyName).emit('youWin');
+            socket.emit('youWin');
             socket.broadcast
             .to(data.lobbyName)
             .emit('youLose')
@@ -117,13 +130,22 @@ io.on('connection', function (socket) {
 
     })
     socket.on('disconnect', () => {
-		/* delete sockets[socket.id];
-		console.log(socket.id+"вышел") */
-        /* console.log(Object.getOwnPropertyNames(sockets)) */
-		}
-        
-	)
-    /* console.log(Object.getOwnPropertyNames(sockets)) */
+        let lobbyToleave = lobbies.find(lobby => lobby.hasOwnProperty(socket.id))
+        if(lobbyToleave){
+            socket.broadcast
+                .to(lobbyToleave.lobbyName)
+                .emit('youWin')
+            let index=lobbies.findIndex(lobby=>lobby.lobbyName==lobbyToleave.lobbyName)
+            lobbies.splice(index,1)
+            io.to("mainroom").emit('getLobbies',lobbies)
+        }
+        let userLeaving=users.find(user => user.id==socket.id)
+        let userIndex=users.findIndex(user => user.id==socket.id)
+        users.splice(userIndex,1)
+        io.emit('getUsers',users)
+        io.emit('newMessage',m('admin',`${userLeaving.username} покинул игру`))
+
+    })
 }); 
 function getWinner(socketid){
     if (socketid.includes("0") && socketid.includes("1") && socketid.includes("2")) return 1 

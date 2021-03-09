@@ -4,6 +4,8 @@ import Chatgame from './components/Chatgame.vue'
 import VueSocketIO from 'vue-socket.io'
 import SocketIO from 'socket.io-client'
 import VueRouter from 'vue-router'
+/* import moment from 'moment'
+Vue.use(moment); */
 Vue.use(VueRouter);
 const routes = [
   {path: "/chatgame",component: Chatgame},
