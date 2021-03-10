@@ -2,7 +2,9 @@
   <div>
     <div v-if="!visible">
       <input type="text" v-model="username">
+      <input type="text" v-model="password">
       <button @click="login">Вход</button>
+      <button @click="reg">Регистрация</button>
     </div>
     <router-view></router-view>  
   </div>
@@ -21,6 +23,7 @@ export default {
         textMessage:"",
         lobbies:"",
         myLobby:"",
+        password:"",
 
     }
   },
@@ -28,13 +31,23 @@ export default {
   },
   methods:{
     login(){
-      this.$socket.emit("login",this.username,data=>{
+      this.$socket.emit("login",{username:this.username,password:this.password},data=>{
+        if (typeof data==='string'){
+          alert(data)
+        }else{
+          this.visible=!this.visible
+          this.$router.push('/chatgame')
+        }
+      })
+    },
+    reg(){
+      this.$socket.emit("registration",{username:this.username,password:this.password},data=>{
         if (typeof data==='string'){
           alert(data)
         }else{
         /* регистрация в монгу + редирект на страницу игры */
-          this.visible=!this.visible
-          this.$router.push('/chatgame')
+          /* this.visible=!this.visible */
+          /* this.$router.push('/chatgame') */
         }
       })
     },

@@ -5,7 +5,7 @@
             <ul class="chat">
                 <li v-for="(message,index) in messages"
                 :key="index"
-                >{{message.time}}. {{message.username}}: {{message.text}}</li>
+                >{{message.time}}|{{message.username}}: {{message.text}}</li>
             </ul>    
           </div>
           <div class="input">
